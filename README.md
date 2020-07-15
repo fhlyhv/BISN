@@ -1,6 +1,8 @@
 This Matlab toolbox implements the BISN algorithm proposed in [1]. Please 
 check the following steps before using the toolbox.
 
+***************************************************************************
+
 1. Comiling the mex code
 
 The C++ code is written based on the template-based C++ library Armadillo. 
@@ -21,18 +23,12 @@ In particualr for ubuntu OS, Intel MLK can be downloaded and installed by
 running the following commands in the terminal:
 
 
-cd /tmp
-
-sudo wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
-
-sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
-
-sudo sh -c 'echo deb https://apt.repos.intel.com/mkl all main > /etc/apt/sources.list.d/intel-mkl.list'
-
-sudo apt-get update
-
+cd /tmp  
+sudo wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB  
+sudo apt-key add GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB  
+sudo sh -c 'echo deb https://apt.repos.intel.com/mkl all main > /etc/apt/sources.list.d/intel-mkl.list'  
+sudo apt-get update  
 sudo apt-get install intel-mkl-64bit-2018.2-046
-
 
 To mex the C++ code in Windows using the msvc compiler, please run 
 win_msvc_IntelMKL_mex.m in Matlab.
@@ -43,7 +39,7 @@ linux_gpp_IntelMKL_mex.m in Matlab.
 You may need to change directory of Intel MKL to your own installation 
 directory in the above m files.
 
-
+***************************************************************************
 
 2. Call function BISN_integrated.m
 
@@ -59,7 +55,7 @@ You need to reduce the step size eta (see below) if the algorithm
 divergences (e.g., some very large values suddenly appears). By default, 
 we set eta = 300.
 
-options.eta = 100;
+options.eta = 100;  
 K = BISN_integrated(XDat, options);
 
 On the other hand, you may consider increasing the step size if the 
@@ -88,7 +84,7 @@ can reliably estimate the non-zero elements when the sample size is
 relatively large, but it is recommended to reestimate the non-zero elements 
 when the sample size is small. To do so, we can call the function as:
 
-options.prm_learning = 1;
+options.prm_learning = 1;  
 K = BISN_integrated(XDat, options);
 
 An example of testing BISN_integrated on synthetic data w/o missing data 
