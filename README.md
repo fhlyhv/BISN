@@ -98,7 +98,7 @@ in example.m.
     Networks with Automatic Sparsity Determination. Journal of Machine 
     Learning Research, 2020.  
 [2] C. Sanderson, R. Curtin. Armadillo: a template-based C++ library for 
-    linear algebra. Journal of Open Source Software, 2016.
+    linear algebra. Journal of Open Source Software, 2016.  
 [3] H. Yu, L. Xin, and J. Dauwels. Variational wishart approximation for 
     graphical model selection: Monoscale and multiscale models. IEEE 
     Transactions on Signal Processing, 2019.
