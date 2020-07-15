@@ -5,7 +5,7 @@ check the following steps before using the toolbox.
 
 1. Comiling the mex code
 
-The C++ code is written based on the template-based C++ library Armadillo. 
+The C++ code is written based on the template-based C++ library Armadillo [2]. 
 To achieve the best performance, it is better to link the C++ code with
 BLAS and LAPACK in Intel MKL in Linux, since currently openmp 3.1 is not 
 supported in Windows.
@@ -63,19 +63,20 @@ algorithm doesn't diverge and you want to speed up the convergence.
 
 Instead of simply estmating L and D from the data (which is given by the 
 function BISN.cpp), BISN_integrated.m further thresholding 
-<&lambda;><sub>jk</sub> / (1 +&lambda;<sub>jk</sub>) using the method in Section V in [2] to yield a 
-sparse graph in an automated manner. However, due to the mean-filed 
-approximation used in BISN, lambda of elements in the bottom-right corner 
-are typically not well estimated. More specifically, since 
-$K_{jk} = [LDL^T]_{jk}$, the elements in  the bottom-right corner of K are 
-the sum of a larger set of elements in L and D than the elements in the 
-top-left corner. Due to the mean field approximation, the estimates 
-of <K<sub>jk<sup>2> is typically corrupted by the variances of elements in L and D. 
-As lambda<sub>jk is a function of <K<sub>jk<sup>2>, it cannot be well estimated either.
-To settle this problem, we run BISN again by reversely ordering the data 
-(i.e., setting options.backward_pass = 1) and then average the resulting 
-lambda with that from the forward pass. Note that options.backward_pass = 1 
-by default.
+<&lambda;<sub>jk</sub>> / (1 +<&lambda;<sub>jk</sub>>) using the method in 
+Section V in [3] to yield a sparse graph in an automated manner. However, 
+due to the mean-filed approximation used in BISN, &lambda;<sub>jk</sub> of 
+elements (j, k) in the bottom-right corner are typically not well estimated. 
+More specifically, since K<sub>jk</sub> = [LDL<sup>T</sup>]<sub>jk</sub>, 
+the elements in the bottom-right corner of K are the sum of a larger set of 
+elements in L and D than the elements in the top-left corner. Due to the 
+mean field approximation, the estimates of <K<sub>jk</sub><sup>T</sup>> is 
+typically corrupted by the variances of elements in L and D. As 
+&lambda;<sub>jk</sub> is a function of <K<sub>jk</sub><sup>T</sup>>, it 
+cannot be well estimated either. To settle this problem, we run BISN again 
+by reversely ordering the data (i.e., setting options.backward_pass = 1) 
+and then average the resulting lambda with that from the forward pass. 
+Note that options.backward_pass = 1 by default.
 
 On the other hand, after estimating the sparse precision matrix, 
 BISN_integrated.m can further reestimate the non-zero elements in the 
@@ -96,6 +97,8 @@ in example.m.
 [1] H. Yu, S. Wu, L. Xin, and J. Dauwels. Fast Bayesian Inference of Sparse 
     Networks with Automatic Sparsity Determination. Journal of Machine 
     Learning Research, 2020.  
-[2] H. Yu, L. Xin, and J. Dauwels. Variational wishart approximation for 
+[2] C. Sanderson, R. Curtin. Armadillo: a template-based C++ library for 
+    linear algebra. Journal of Open Source Software, 2016.
+[3] H. Yu, L. Xin, and J. Dauwels. Variational wishart approximation for 
     graphical model selection: Monoscale and multiscale models. IEEE 
     Transactions on Signal Processing, 2019.
