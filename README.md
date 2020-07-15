@@ -2,6 +2,7 @@ This Matlab toolbox implements the BISN algorithm proposed in [1]. Please
 check the following steps before using the toolbox.
 
 1. Comiling the mex code
+
 The C++ code is written based on the template-based C++ library Armadillo. 
 To achieve the best performance, it is better to link the C++ code with
 BLAS and LAPACK in Intel MKL in Linux, since currently openmp 3.1 is not 
@@ -19,6 +20,7 @@ https://software.intel.com/en-us/mkl
 In particualr for ubuntu OS, Intel MLK can be downloaded and installed by 
 running the following commands in the terminal:
 
+
 cd /tmp
 
 sudo wget https://apt.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
@@ -30,6 +32,7 @@ sudo sh -c 'echo deb https://apt.repos.intel.com/mkl all main > /etc/apt/sources
 sudo apt-get update
 
 sudo apt-get install intel-mkl-64bit-2018.2-046
+
 
 To mex the C++ code in Windows using the msvc compiler, please run 
 win_msvc_IntelMKL_mex.m in Matlab.
