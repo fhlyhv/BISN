@@ -70,13 +70,13 @@ elements (j, k) in the bottom-right corner are typically not well estimated.
 More specifically, since K<sub>jk</sub> = [LDL<sup>T</sup>]<sub>jk</sub>, 
 the elements in the bottom-right corner of K are the sum of a larger set of 
 elements in L and D than the elements in the top-left corner. Due to the 
-mean field approximation, the estimates of <K<sub>jk</sub><sup>T</sup>> is 
+mean field approximation, the estimates of <K<sub>jk</sub><sup>2</sup>> is 
 typically corrupted by the variances of elements in L and D. As 
-&lambda;<sub>jk</sub> is a function of <K<sub>jk</sub><sup>T</sup>>, it 
+&lambda;<sub>jk</sub> is a function of <K<sub>jk</sub><sup>2</sup>>, it 
 cannot be well estimated either. To settle this problem, we run BISN again 
 by reversely ordering the data (i.e., setting options.backward_pass = 1) 
-and then average the resulting lambda with that from the forward pass. 
-Note that options.backward_pass = 1 by default.
+and then average the resulting &lambda;<sub>jk</sub> with that from the 
+forward pass. Note that options.backward_pass = 1 by default.
 
 On the other hand, after estimating the sparse precision matrix, 
 BISN_integrated.m can further reestimate the non-zero elements in the 
