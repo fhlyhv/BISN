@@ -63,15 +63,15 @@ algorithm doesn't diverge and you want to speed up the convergence.
 
 Instead of simply estmating L and D from the data (which is given by the 
 function BISN.cpp), BISN_integrated.m further thresholding 
-lambda / (1 + lambda) using the method in Section V in [2] to yield a 
+$\lambda_{jk} / (1 +\lambda_{jk})$ using the method in Section V in [2] to yield a 
 sparse graph in an automated manner. However, due to the mean-filed 
 approximation used in BISN, lambda of elements in the bottom-right corner 
 are typically not well estimated. More specifically, since 
-K_{jk} = [LDL^T]_{jk}, the elements in  the bottom-right corner of K are 
+K<sub>jk = [LDL<sup>T]<sub>jk, the elements in  the bottom-right corner of K are 
 the sum of a larger set of elements in L and D than the elements in the 
 top-left corner. Due to the mean field approximation, the estimates 
-of <K_{jk}^2> is typically corrupted by the variances of elements in L and D. 
-As lambda is a function of <K_{jk}^2>, it cannot be well estimated either.
+of <K<sub>jk<sup>2> is typically corrupted by the variances of elements in L and D. 
+As lambda<sub>jk is a function of <K<sub>jk<sup>2>, it cannot be well estimated either.
 To settle this problem, we run BISN again by reversely ordering the data 
 (i.e., setting options.backward_pass = 1) and then average the resulting 
 lambda with that from the forward pass. Note that options.backward_pass = 1 
@@ -95,7 +95,7 @@ in example.m.
 
 [1] H. Yu, S. Wu, L. Xin, and J. Dauwels. Fast Bayesian Inference of Sparse 
     Networks with Automatic Sparsity Determination. Journal of Machine 
-    Learning Research, 2020.
+    Learning Research, 2020.  
 [2] H. Yu, L. Xin, and J. Dauwels. Variational wishart approximation for 
     graphical model selection: Monoscale and multiscale models. IEEE 
     Transactions on Signal Processing, 2019.
