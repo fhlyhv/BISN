@@ -63,7 +63,7 @@ algorithm doesn't diverge and you want to speed up the convergence.
 
 Instead of simply estmating L and D from the data (which is given by the 
 function BISN.cpp), BISN_integrated.m further thresholding 
-$\lambda_{jk} / (1 +\lambda_{jk})$ using the method in Section V in [2] to yield a 
+\lambda_{jk} / (1 +\lambda_{jk}) using the method in Section V in [2] to yield a 
 sparse graph in an automated manner. However, due to the mean-filed 
 approximation used in BISN, lambda of elements in the bottom-right corner 
 are typically not well estimated. More specifically, since 
