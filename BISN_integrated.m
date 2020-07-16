@@ -39,7 +39,7 @@ function [Ksparse, Adj, Kest, LAMBDA, t] = BISN_integrated(XDat, options)
 % AUTHOR: Hang Yu, 2020, NTU.
 
 
-p = size(XDat, 2);
+[n, p] = size(XDat);
 
 
 if ~exist('options','var')
@@ -160,8 +160,18 @@ fprintf("adjacency marix has been estimated, elapsed time is %d seconds\n", t);
 
 if options.prm_learning == 1
     fprintf("start reestimating the non-zero elements...\n");
-    XDat = XDat(:, p:-1:1);
-    S = cov(XDat);
+    if options.backward_pass
+        XDat = XDat(:, p:-1:1);
+    end
+    if ~isempty(id_row)
+        id_missing = id_row + (id_col - 1) * n;
+        obsv_mat = ones(n, p);
+        obsv_mat(id_missing) = 0;
+        XDat(id_missing) = 0;
+        S = XDat' * XDat ./ (obsv_mat' * obsv_mat - 1);
+    else
+        S = cov(XDat);
+    end
     [idr, idc] = find(tril(Adj, -1));
     Ksparse = QUICParameterLearning(Ksparse, S, idr, idc);
     t = toc;
