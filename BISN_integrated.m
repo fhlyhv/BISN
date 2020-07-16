@@ -88,7 +88,7 @@ if ~isempty(id_row)
     fprintf("forward pass...\n");
     row_missing = unique(id_row);
     id_mat = [id_row, id_col];
-    [ML,VL,mD,vD,omega,lambda] = BISN_missing(XDat, row_missing, id_mat, ...
+    [ML,~,mD,~,~,lambda] = BISN_missing(XDat, row_missing, id_mat, ...
         options.eta, options.maxIter, options.tol, options.r, options.s);
     Kest = ML * diag(mD) * ML';
     LAMBDA(idl) = lambda;
@@ -99,7 +99,7 @@ if ~isempty(id_row)
         XDat = XDat(:, p:-1:1);
         row_missing = unique(id_row1);
         id_mat = [id_row1, id_col1];
-        [ML,VL,mD,vD,omega,lambda] = BISN_missing(XDat, row_missing, id_mat, ...
+        [ML,~,mD,~,~,lambda] = BISN_missing(XDat, row_missing, id_mat, ...
             options.eta, options.maxIter, options.tol, options.r, options.s);
         Kest1 = ML * diag(mD) * ML';
         Kest1 = Kest1(p:-1:1, p:-1:1);
@@ -113,7 +113,7 @@ if ~isempty(id_row)
     
 else
     fprintf("forward pass...\n");
-    [ML,VL,mD,vD,omega,lambda] = BISN(XDat, options.eta, options.maxIter, ...
+    [ML,~,mD,~,~,lambda] = BISN(XDat, options.eta, options.maxIter, ...
         options.tol, options.r, options.s);
     Kest = ML * diag(mD) * ML';
     LAMBDA(idl) = lambda;
@@ -122,7 +122,7 @@ else
     if options.backward_pass
         fprintf("backward pass...\n");
         XDat = XDat(:, p:-1:1);
-        [ML,VL,mD,vD,omega,lambda] = BISN(XDat, options.eta, options.maxIter, ...
+        [ML,~,mD,~,~,lambda] = BISN(XDat, options.eta, options.maxIter, ...
             options.tol, options.r, options.s);
         Kest1 = ML * diag(mD) * ML';
         Kest1 = Kest1(p:-1:1, p:-1:1);
@@ -160,6 +160,7 @@ fprintf("adjacency marix has been estimated, elapsed time is %d seconds\n", t);
 
 if options.prm_learning == 1
     fprintf("start reestimating the non-zero elements...\n");
+    XDat = XDat(:, p:-1:1);
     S = cov(XDat);
     [idr, idc] = find(tril(Adj, -1));
     Ksparse = QUICParameterLearning(Ksparse, S, idr, idc);
