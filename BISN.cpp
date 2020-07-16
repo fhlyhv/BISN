@@ -352,7 +352,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
     mD = alpha/beta;
     vD = mD/beta;
     double ElapsedTime = (clock()-timeBegin)/CLOCKS_PER_SEC;
-    if (kappa < maxIter || difmL<tol) mexPrintf("BISN converges, elapsed time is %f seconds.\n",ElapsedTime);
+    if (kappa < maxIter && difmL<tol) mexPrintf("BISN converges, elapsed time is %f seconds.\n",ElapsedTime);
     else mexPrintf("BISN reaches the maximum number of iterations, elapsed time is %f seconds.\n",ElapsedTime);
 
     /* Output Interface */
