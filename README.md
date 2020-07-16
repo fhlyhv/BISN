@@ -51,14 +51,14 @@ where XDat is a n x p matrix with n observations for each of the p
 variables. Missing data can be represented by NaN in XDat. The resulting 
 K matrix will be a sparse matrix. 
 
-You need to reduce the step size eta (see below) if the algorithm 
+You need to reduce the step size upper bound eta (see below) if the algorithm 
 divergences (e.g., some very large values suddenly appears). By default, 
 we set eta = 300.
 
 options.eta = 100;  
 K = BISN_integrated(XDat, options);
 
-On the other hand, you may consider increasing the step size if the 
+On the other hand, you may consider increasing eta if the 
 algorithm doesn't diverge and you want to speed up the convergence.
 
 Instead of simply estmating L and D from the data (which is given by the 
