@@ -77,7 +77,7 @@ can be large when the sample size is small. As <&lambda;<sub>jk</sub>> is a
 function of <K<sub>jk</sub><sup>2</sup>>, it cannot be well estimated 
 either. To settle this problem, we run BISN again by reversely ordering 
 the data (i.e., setting options.backward_pass = 1) and then average the 
-resulting &lambda;<sub>jk</sub> with that from the forward pass. Note that 
+resulting <&lambda;<sub>jk</sub>> with that from the forward pass. Note that 
 options.backward_pass = 1 by default and it can be set to 0 when the sample 
 size is large.
 
