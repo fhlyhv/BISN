@@ -26,7 +26,9 @@ else
 end
 
 %% call BISN
-options.prm_learning = 1;
+% options.eta = 100;            % shrink eta if the algorithm diverges
+% options.backward_pass = 0;    % set to be 1 if the sample size n is small
+options.prm_learning = 1;     % set to be 1 if the sample size n is small and the nonzero entries in K cannot be well estimated
 Ksparse = BISN_integrated(normalized_data, options);
 
 %% check performance
