@@ -128,7 +128,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
 
     vec mD, mD2, mD2pvD, vD, vL, lambda(pe), gmL, gvL, gmD, gvD, c5(p), c6, mLnew, lambdanew, alphatmp, betatmp, dtmp;//mL,
     mat c1, c2, c3, c4, LDL, c2pc3, K_tmp1, K_tmp2;
-    double omega, tmp1, tmp2, tmp3, difmL, diflambda, difmax;
+    double omega, difmL, diflambda, difmax;
     vec d1h(pe,fill::zeros), d1zeta(pe,fill::zeros), d1alpha(p,fill::zeros), d1beta(p,fill::zeros), d1d(pe,fill::zeros);
     double d2h = 0, d2zeta = 0, d2alpha = 0, d2beta = 0, d2d = 0, d1b = 0, d2b = 0;
     double tau = 6e2; //, tauzeta = tauh, taualpha = tauh, taubeta = tauh, taub = tauh, taud = tauh;
