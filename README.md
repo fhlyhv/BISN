@@ -65,7 +65,7 @@ Instead of simply estmating L and D from the data (which is given by the
 function BISN.cpp), BISN_integrated.m further thresholding 
 <&lambda;<sub>jk</sub>> / (1 +<&lambda;<sub>jk</sub>>) using the method in 
 Section V in [3] to yield a sparse graph in an automated manner. However, 
-due to the mean-filed approximation used in BISN, &lambda;<sub>jk</sub> of 
+due to the mean-filed approximation used in BISN, <&lambda;<sub>jk</sub>> of 
 elements (j, k) in the bottom-right corner are typically not well estimated
 when the sample size is small. More specifically, since 
 K<sub>jk</sub> = [LDL<sup>T</sup>]<sub>jk</sub>, the elements in the 
@@ -73,13 +73,13 @@ bottom-right corner of K are the sum of a larger set of elements in L and D
 than the elements in the top-left corner. Due to the mean field 
 approximation, the estimates of <K<sub>jk</sub><sup>2</sup>> is 
 typically corrupted by the variances of elements in L and D. These variances
-can be large when the sample size is small. As &lambda;<sub>jk</sub> is a 
+can be large when the sample size is small. As <&lambda;<sub>jk</sub>> is a 
 function of <K<sub>jk</sub><sup>2</sup>>, it cannot be well estimated 
 either. To settle this problem, we run BISN again by reversely ordering 
 the data (i.e., setting options.backward_pass = 1) and then average the 
 resulting &lambda;<sub>jk</sub> with that from the forward pass. Note that 
-options.backward_pass = 1 by default and it can be set to be 0 when the 
-sample size is large.
+options.backward_pass = 1 by default and it can be set to 0 when the sample 
+size is large.
 
 On the other hand, after estimating the sparse precision matrix, 
 BISN_integrated.m can further reestimate the non-zero elements in the 
