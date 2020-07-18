@@ -93,8 +93,8 @@ K = BISN_integrated(XDat, options);
 
 An example of testing BISN_integrated on synthetic data w/o missing data 
 can be found in example.m. To apply BISN to your own data, you may store 
-your data in a nxp matrix as above, normalize the data, and call BISN as 
-in example.m.
+your data in a nxp matrix as above, normalize the data (i.e., 
+set options.normalize = 1), and call BISN as in example.m.
 
 
 [1] H. Yu, S. Wu, L. Xin, and J. Dauwels. Fast Bayesian Inference of Sparse 
