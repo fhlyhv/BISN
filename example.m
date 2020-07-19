@@ -13,10 +13,10 @@ if missing_data
     data(id_missing) = NaN;
 end
 
-%% call BISN
+%% call BISN (The following options result in the original BISN algorithm)
 options.normalize = 0;        % set to 1 if the data is not normalized
 % options.eta = 100;            % shrink eta if the algorithm diverges
-% options.backward_pass = 0;    % set to 1 if the sample size n is small
+options.backward_pass = 0;    % set to 1 if the sample size n is small
 options.prm_learning = 0;     % set to 1 if the sample size n is small and the nonzero entries in K cannot be well estimated
 Ksparse = BISN_integrated(data, options);
 

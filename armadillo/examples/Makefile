@@ -23,7 +23,7 @@ LIB_FLAGS = -lblas -llapack
 ## NOTE: if you're using the Sun Studio compiler, use the line with -library=sunperf
 
 
-OPT = -O3
+OPT = -O2
 ## As the Armadillo library uses recursive templates, compilation times depend on the level of optimisation:
 ##
 ## -O0: quick compilation, but the resulting program will be slow
@@ -50,7 +50,7 @@ OPT = -O3
 ## Not recommended unless your code has been first thoroughly tested!
 
 
-CXXFLAGS = $(ARMA_INCLUDE_FLAG) $(DEBUG) $(FINAL) $(OPT) $(EXTRA_OPT) -fopenmp
+CXXFLAGS = $(ARMA_INCLUDE_FLAG) $(DEBUG) $(FINAL) $(OPT) $(EXTRA_OPT) 
 
 all: example1
 

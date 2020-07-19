@@ -87,6 +87,12 @@
 // #define ARMA_USE_MKL_ALLOC
 //// Uncomment the above line if you want to use Intel MKL mkl_malloc() and mkl_free() instead of standard malloc() and free()
 
+// #define ARMA_USE_MKL_TYPES
+//// Uncomment the above line if you want to use Intel MKL types for complex numbers.
+//// You will need to include appropriate MKL headers before the Armadillo header.
+//// You may also need to enable or disable the following options:
+//// ARMA_BLAS_LONG, ARMA_BLAS_LONG_LONG, ARMA_USE_FORTRAN_HIDDEN_ARGS
+
 #cmakedefine ARMA_USE_ATLAS
 #define ARMA_ATLAS_INCLUDE_DIR ${ARMA_ATLAS_INCLUDE_DIR}/
 //// If you're using ATLAS and the compiler can't find cblas.h and/or clapack.h
@@ -95,7 +101,7 @@
 
 #if !defined(ARMA_USE_CXX11)
 // #define ARMA_USE_CXX11
-//// Uncomment the above line to forcefully enable use of C++11 features (eg. initialiser lists).
+//// Uncomment the above line to forcefully enable use of C++11 features.
 //// Note that ARMA_USE_CXX11 is automatically enabled when a C++11 compiler is detected.
 #endif
 
@@ -109,7 +115,7 @@
 // #define ARMA_64BIT_WORD
 //// Uncomment the above line if you require matrices/vectors capable of holding more than 4 billion elements.
 //// Your machine and compiler must have support for 64 bit integers (eg. via "long" or "long long").
-//// Note that ARMA_64BIT_WORD is automatically enabled when a C++11 compiler is detected.
+//// Note that ARMA_64BIT_WORD is automatically enabled when a C++11 compiler is detected and std::size_t has 64 bits.
 #endif
 
 #if !defined(ARMA_USE_HDF5)
@@ -119,14 +125,17 @@
 //// and you will need to link with the hdf5 library (eg. -lhdf5)
 #endif
 
-#if !defined(ARMA_OPTIMISE_SOLVE_BAND)
-  #define ARMA_OPTIMISE_SOLVE_BAND
-  //// Comment out the above line if you don't want optimised handling of band matrices by solve()
+#if !defined(ARMA_OPTIMISE_BAND)
+  #define ARMA_OPTIMISE_BAND
+  //// Comment out the above line if you don't want automatically optimised handling
+  //// of band matrices by solve() and chol()
 #endif
 
-#if !defined(ARMA_OPTIMISE_SOLVE_SYMPD)
-  #define ARMA_OPTIMISE_SOLVE_SYMPD
-  //// Comment out the above line if you don't want optimised handling of symmetric/hermitian positive definite matrices by solve()
+#if !defined(ARMA_OPTIMISE_SYMPD)
+  #define ARMA_OPTIMISE_SYMPD
+  //// Comment out the above line if you don't want automatically optimised handling
+  //// of symmetric/hermitian positive definite matrices by various functions:
+  //// solve(), inv(), expmat(), logmat(), sqrtmat(), rcond()
 #endif
 
 #cmakedefine ARMA_USE_HDF5_ALT
@@ -243,6 +252,11 @@
   #undef ARMA_USE_EXTERN_CXX11_RNG
 #endif
 
+#if !defined(ARMA_DONT_USE_CXX11_MUTEX)
+  // #define ARMA_DONT_USE_CXX11_MUTEX
+  //// Uncomment the above line to disable use of std::mutex in C++11
+#endif
+
 #if defined(ARMA_DONT_USE_OPENMP)
   #undef ARMA_USE_OPENMP
 #endif
@@ -268,12 +282,12 @@
   #undef ARMA_USE_HDF5_ALT
 #endif
 
-#if defined(ARMA_DONT_OPTIMISE_SOLVE_BAND)
-  #undef ARMA_OPTIMISE_SOLVE_BAND
+#if defined(ARMA_DONT_OPTIMISE_BAND) || defined(ARMA_DONT_OPTIMISE_SOLVE_BAND)
+  #undef ARMA_OPTIMISE_BAND
 #endif
 
-#if defined(ARMA_DONT_OPTIMISE_SOLVE_SYMPD)
-  #undef ARMA_OPTIMISE_SOLVE_SYMPD
+#if defined(ARMA_DONT_OPTIMISE_SYMPD) || defined(ARMA_DONT_OPTIMISE_SOLVE_SYMPD)
+  #undef ARMA_OPTIMISE_SYMPD
 #endif
 
 #if defined(ARMA_DONT_PRINT_ERRORS)
@@ -282,6 +296,10 @@
 
 #if defined(ARMA_DONT_PRINT_HDF5_ERRORS)
   #undef ARMA_PRINT_HDF5_ERRORS
+#endif
+
+#if defined(ARMA_NO_CRIPPLED_LAPACK)
+  #undef ARMA_CRIPPLED_LAPACK
 #endif
 
 

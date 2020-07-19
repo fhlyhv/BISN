@@ -91,6 +91,11 @@ when the sample size is small. To do so, we can call the function as:
 options.prm_learning = 1;  
 K = BISN_integrated(XDat, options);
 
+In addition to the sparse K matrix, there are other output parameters, 
+including the estimated mean and variance of the elements in the precision 
+matrix before sparsifying K, the imputed missing data. Please refer to the 
+function BISN_integrated.m for more details.
+
 An example of testing BISN_integrated on synthetic data w/o missing data 
 can be found in example.m. To apply BISN to your own data, you may store 
 your data in a nxp matrix as above, normalize the data (i.e., 

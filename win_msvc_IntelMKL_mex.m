@@ -12,8 +12,8 @@ LDFLAGS = 'LDFLAGS="$LDFLAGS /LTCG:INCREMENTAL"';
 
 libraries = {'-lmkl_intel_lp64', '-lmkl_intel_thread', '-lmkl_core', '-llibiomp5md'};
 
-mex(include_paths{:}, COMPFLAGS, LDFLAGS, library_paths{:}, libraries{:}, 'BISN.cpp');
+%mex(include_paths{:}, COMPFLAGS, LDFLAGS, library_paths{:}, libraries{:}, 'BISN.cpp');
 
 mex(include_paths{:}, COMPFLAGS, LDFLAGS, library_paths{:}, libraries{:}, 'BISN_missing.cpp');
 
-mex(include_paths{:}, COMPFLAGS, LDFLAGS, library_paths{:}, libraries{:}, 'QUICParameterLearning.cpp');
+% mex(include_paths{:}, COMPFLAGS, LDFLAGS, library_paths{:}, libraries{:}, 'QUICParameterLearning.cpp');

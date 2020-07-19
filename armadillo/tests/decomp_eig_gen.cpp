@@ -49,13 +49,24 @@ TEST_CASE("decomp_eig_gen_1")
   cx_mat eigvecs4;
   eig_gen(eigvals4, eigvecs4, A);
   
-  cx_mat B = eigvecs4 * diagmat(eigvals4) * inv(eigvecs4);
+  cx_vec  eigvals5;
+  cx_mat leigvecs5;
+  cx_mat reigvecs5;
+  eig_gen(eigvals5, leigvecs5, reigvecs5, A);
+  
+  cx_mat B  =            eigvecs4   * diagmat(eigvals4) *   inv( eigvecs4);
+  
+  cx_mat Cl = inv(trans(leigvecs5)) * diagmat(eigvals5) * trans(leigvecs5);
+  cx_mat Cr =           reigvecs5   * diagmat(eigvals5) *   inv(reigvecs5);
   
   REQUIRE( status == true );
   REQUIRE( accu(abs(eigvals2 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
   REQUIRE( accu(abs(eigvals3 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
   REQUIRE( accu(abs(eigvals4 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
+  REQUIRE( accu(abs(eigvals5 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
   REQUIRE( accu(abs(A        - B       )) == Approx(0.0).epsilon(0.0001) );
+  REQUIRE( accu(abs(A        - Cl      )) == Approx(0.0).epsilon(0.0001) );
+  REQUIRE( accu(abs(A        - Cr      )) == Approx(0.0).epsilon(0.0001) );
   }
 
 
@@ -87,13 +98,24 @@ TEST_CASE("decomp_eig_gen_2")
   cx_mat eigvecs4;
   eig_gen(eigvals4, eigvecs4, A);
   
-  cx_mat B = eigvecs4 * diagmat(eigvals4) * inv(eigvecs4);
-   
+  cx_vec  eigvals5;
+  cx_mat leigvecs5;
+  cx_mat reigvecs5;
+  eig_gen(eigvals5, leigvecs5, reigvecs5, A);
+  
+  cx_mat B  =            eigvecs4   * diagmat(eigvals4) *   inv( eigvecs4);
+
+  cx_mat Cl = inv(trans(leigvecs5)) * diagmat(eigvals5) * trans(leigvecs5);
+  cx_mat Cr =           reigvecs5   * diagmat(eigvals5) *   inv(reigvecs5);
+  
   REQUIRE( status == true );
   REQUIRE( accu(abs(eigvals2 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
   REQUIRE( accu(abs(eigvals3 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
   REQUIRE( accu(abs(eigvals4 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
+  REQUIRE( accu(abs(eigvals5 - eigvals1)) == Approx(0.0).epsilon(0.0001) );
   REQUIRE( accu(abs(A        - B       )) == Approx(0.0).epsilon(0.0001) );
+  REQUIRE( accu(abs(A        - Cl      )) == Approx(0.0).epsilon(0.0001) );
+  REQUIRE( accu(abs(A        - Cr      )) == Approx(0.0).epsilon(0.0001) );
   }
 
 

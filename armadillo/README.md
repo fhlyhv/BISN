@@ -1,10 +1,10 @@
 ### Armadillo: C++ Library for Linear Algebra & Scientific Computing  
 http://arma.sourceforge.net
 
-Copyright 2008-2019 Conrad Sanderson (http://conradsanderson.id.au)  
+Copyright 2008-2020 Conrad Sanderson (http://conradsanderson.id.au)  
 Copyright 2008-2016 National ICT Australia (NICTA)  
-Copyright 2017-2019 Arroyo Consortium  
-Copyright 2017-2019 Data61, CSIRO  
+Copyright 2017-2020 Arroyo Consortium  
+Copyright 2017-2020 Data61, CSIRO  
 
 ---
 
@@ -51,12 +51,14 @@ aiming towards a good balance between speed and ease of use.
 
 It's useful for algorithm development directly in C++,
 and/or quick conversion of research code into production environments.
-The syntax (API) is deliberately similar to Matlab.
+It has high-level syntax and functionality which is deliberately similar to Matlab.
 
 The library provides efficient classes for vectors, matrices and cubes,
-as well as 200+ associated functions (eg. contiguous and non-contiguous
-submatrix views). Various matrix decompositions are provided through
-integration with LAPACK, or one of its high performance drop-in replacements
+as well as 200+ associated functions covering essential and advanced functionality
+for data processing and manipulation of matrices.
+
+Various matrix decompositions are provided through integration with LAPACK,
+or one of its high performance drop-in replacements
 (eg. OpenBLAS, Intel MKL, Apple Accelerate framework, etc).
 
 A sophisticated expression evaluator (via C++ template meta-programming)
@@ -74,17 +76,16 @@ Authors:
 
 ### 2: Citation Details
 
-Please cite one (or both) of the following papers if you use Armadillo
-in your research and/or software.  Citations are useful
-for the continued development and maintenance of the library.
+Please cite the following papers if you use Armadillo in your research and/or software.  
+Citations are useful for the continued development and maintenance of the library.
 
   * Conrad Sanderson and Ryan Curtin.  
     Armadillo: a template-based C++ library for linear algebra.  
     Journal of Open Source Software, Vol. 1, pp. 26, 2016.  
   
   * Conrad Sanderson and Ryan Curtin.  
-    Practical Sparse Matrices in C++ with Hybrid Storage and Template-Based Expression Optimisation.  
-    Mathematical and Computational Applications, Vol. 24, No. 3, 2019.
+    A User-Friendly Hybrid Sparse Matrix Class in C++.  
+    Lecture Notes in Computer Science (LNCS), Vol. 10931, pp. 422-430, 2018.
 
 ---
 
@@ -105,17 +106,18 @@ informational purposes only and do not modify the License.
 
 ### 4: Compilers and External Dependencies
 
-Armadillo makes extensive use of template meta-programming, recursive templates
-and template based function overloading. As such, C++ compilers which do not
-fully implement the C++ standard may not work correctly.
+Armadillo makes extensive use of template meta-programming and many other
+advanced C++ features.  As such, C++ compilers which do not fully implement
+the C++ standard may not work correctly.
 
 The functionality of Armadillo is partly dependent on other libraries:
-LAPACK, BLAS, ARPACK and SuperLU. The LAPACK and BLAS libraries are
-used for dense matrices, while the ARPACK and SuperLU libraries are
-used for sparse matrices. Armadillo can work without these libraries,
-but its functionality will be reduced. In particular, basic functionality
-will be available (eg. matrix addition and multiplication), but things
-like eigen decomposition or matrix inversion will not be.
+LAPACK, BLAS (preferably OpenBLAS), ARPACK and SuperLU.
+LAPACK and BLAS are used for dense matrices,
+while ARPACK and SuperLU are used for sparse matrices.
+
+Armadillo can work without the above libraries, but its functionality will be reduced.
+Basic functionality will be available (eg. matrix addition and multiplication),
+but operations like eigen decomposition or matrix inversion will not be.
 Matrix multiplication (mainly for big matrices) may not be as fast.
 
 As Armadillo is a template library, we recommended that optimisation
@@ -364,7 +366,7 @@ as well as the newer C++11 and C++14 standards.
 
 Armadillo will enable extra features (such as move constructors)
 when a C++11/C++14 compiler is detected. You can also force Armadillo
-to make use C++11 features by defining ARMA_USE_CXX11 before
+to make use of C++11 features by defining ARMA_USE_CXX11 before
 `#include <armadillo>` in your code.
 
 You may need to explicitly enable C++11 mode in your compiler.
@@ -467,7 +469,7 @@ Octave/Matlab with C++ code that uses Armadillo matrices.
 * MLPACK: extensive library of machine learning algorithms  
   http://mlpack.org
 
-* ensmallen: flexible C++ library for efficient mathematical optimisation  
+* ensmallen: C++ library of numerical optimisation methods  
   http://ensmallen.org/
 
 * SigPack: C++ signal processing library  

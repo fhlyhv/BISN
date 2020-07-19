@@ -1,22 +1,11 @@
 #include <mex.h>
 #include "armaMex.hpp"
 #include <armadillo>
-#include <time.h>
-# include <stdio.h>
-# include <stdlib.h>
-# include <string.h>
-#include <math.h>
-#include <float.h>
-#include <time.h>
 #include <boost/math/special_functions/expint.hpp>
 #include <boost/math/special_functions/trigamma.hpp>
-//#include <boost/math/special_functions/round.hpp>
 #define POSITIVE_EPS 0.0001
 #define epsilon1 1e-30
 #define epsilon2 1e-7
-//#pragma comment(lib, "libmwservices.lib")
-//extern bool ioFlush(void);
-// use half Cauchy prior on the global shrinkage parameter omega
 
 double Lentz_Algorithm(double const x)
 {
@@ -85,7 +74,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
     
 	
     /* Initialization */
-    double timeBegin = clock();
+    auto t_start = std::chrono::high_resolution_clock::now();
 	mat nS(p, p);
     vec dnS;
     uword pe = p*(p-1)/2;
@@ -109,7 +98,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
     }
 
     double psr = (double)p/s;
-    uvec idp(p), id0(s), idd;
+    uvec id0, idd;
     vec nd2pp = (double)n/2+linspace<vec>(p,1,p);
 
     mat ML(p,p,fill::eye);
@@ -173,11 +162,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
         omega = a/b;
         lambda = d;
         lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(-val) * exp(val));});
-        //for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
-		//lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
         lambda = 1/(d%lambda)-1;
-//         lambda.elem(find(d<0)).fill(1e6);
-//         lambda.elem(find(lambda>1e6)).fill(1e6);
         LAMBDA.elem(idl) = omega*lambda;
         LAMBDA.elem(idu) = LAMBDA.elem(idl);
         
@@ -190,11 +175,11 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
             S_cond = (S_cond + S_cond.t()) / 2;
             S_cond = inv_sympd(S_cond);
             XDat(id_tmp, col_missing(i)).zeros();
-            XDat(id_tmp, col_missing(i)) = - XDat.row(row_missing(i)) * LD \
+            XDat(id_tmp, col_missing(i)) = - XDat.row(row_missing(i)) * LD 
                     * ML.rows(col_missing(i)).t() * S_cond;
-            nS(col_missing(i), col_missing(i)) += S_cond + \
+            nS(col_missing(i), col_missing(i)) += S_cond + 
                     XDat(id_tmp, col_missing(i)).t() * XDat(id_tmp, col_missing(i));
-            S_cond.clear();
+            // S_cond.clear();
         }
         nS += nS0;
         dnS = nS.diag();
@@ -245,7 +230,6 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
         gvD = trans(sum(ML2pVL%c2pc3))/4;
         c5 = alpha;
         c5.transform([](double val) { return boost::math::trigamma(val); });
-        //for (i=0;i<p;i++) c5(i) = boost::math::trigamma(alpha(i));
         c6 = mD/(alpha%c5-1);
         alphatmp = nd2pp+c6/beta%gvD;
         alphatmp.elem(find(alphatmp<0)).zeros();
@@ -275,69 +259,14 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
 
 
 
-        /*idd = find(gvL<0);
-        if (!idd.is_empty())
-        {
-            rho_ub = -c7*max(zeta.elem(idd)/gzeta.elem(idd));
-            idd.clear();
-            if (rho>rho_ub) rho = rho_ub; //rho*pow(0.5,ceil(log2(rho/rho_ub)));
-        }
-
-
-
-        idd = find(alphatmp<0);
-        if (!idd.is_empty())
-        {
-            rho_ub = -c7*max(alpha.elem(idd)/galpha.elem(idd));
-            idd.clear();
-            if (rho>rho_ub) rho = rho_ub; //rho*pow(0.5,ceil(log2(rho/rho_ub)));
-        }
-
-
-
-        idd = find(betatmp<0);
-        if (!idd.is_empty())
-        {
-            rho_ub = -c7*max(beta.elem(idd)/gbeta.elem(idd));
-            idd.clear();
-            if (rho>rho_ub) rho = rho_ub; //rho*pow(0.5,ceil(log2(rho/rho_ub)));
-        }
-
-
-
-        idd = find(dtmp<0);
-        if (!idd.is_empty())
-        {
-            rho_ub = -c7*max(d.elem(idd)/gd.elem(idd));
-            idd.clear();
-            if (rho>rho_ub) rho = rho_ub; //rho*pow(0.5,ceil(log2(rho/rho_ub)));
-        }
-
-
-
-        if (btmp<0)
-        {
-            rho_ub = -c7*b/gb;
-            if (rho>rho_ub) rho = rho_ub;
-        }*/
+        
         tau = (1-rho)*tau + 1;
         h += rho*gh;
-//         gvL = zeta;
         zeta += rho*gzeta;
-//         zeta.elem(find(zeta<1e-6)) = 0.5*gvL.elem(find(zeta<1e-6));
-//         alphatmp = alpha;
         alpha += rho*galpha;
-//         alpha.elem(find(alpha<1e-6)) = 0.5*alphatmp.elem(find(alpha<1e-6));
-//         betatmp = beta;
         beta += rho*gbeta;
-//         beta.elem(find(beta<1e-6)) = 0.5*betatmp.elem(find(beta<1e-6));
-//         dtmp = d;
         d += rho*gd;
-//         d.elem(find(d<1e-6)) = 0.5*dtmp.elem(find(d<1e-6));
-//         btmp = b;
         b += rho*gb;
-//         if (b<1e-6) b = btmp/2;
-        //if (b>a) b = a;
 
 
         if (kappa%100 == 0)
@@ -358,13 +287,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
             }
         }
 
-        idp = linspace<uvec>(0, p-1, p);
-        for (i=0;i<s;i++)
-        {
-            k = randi<uword>(distr_param(0,p-1-i));
-            id0(i) = idp(k);
-            if (k!=p-1-i) idp.subvec(k,p-2-i) = idp.subvec(k+1,p-1-i);
-        }
+        id0 = randperm(p, s);
         
         LDL = LD.rows(id0)*ML.t();
         c1.rows(id0) -= psr*(nS.rows(id0)+LDL%LAMBDA.rows(id0))*ML;
@@ -385,9 +308,10 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
     VL.elem(idl) = 1/zeta;
     mD = alpha/beta;
     vD = mD/beta;
-    double ElapsedTime = (clock()-timeBegin)/CLOCKS_PER_SEC;
-    if (kappa < maxIter && difmL<tol) mexPrintf("BISN converges, elapsed time is %f seconds.\n",ElapsedTime);
-    else mexPrintf("BISN reaches the maximum number of iterations, elapsed time is %f seconds.\n",ElapsedTime);
+    auto t_end = std::chrono::high_resolution_clock::now();
+    double ElapsedTime = std::chrono::duration<double, std::milli>(t_end-t_start).count() / 1e3;
+    if (kappa < maxIter && difmL<tol) mexPrintf("BISN converges, elapsed time is %e seconds.\n",ElapsedTime);
+    else mexPrintf("BISN reaches the maximum number of iterations, elapsed time is %e seconds.\n",ElapsedTime);
 
     /* Output Interface */
     if (nlhs>3)
@@ -407,16 +331,18 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
         }
         if (nlhs>5)
         {
-            //lambda = c/d;
             lambda = d;
             lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(-val) * exp(val));});
-            //for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
-            //lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
             lambda = 1/(d%lambda)-1;
             plhs[5] = armaCreateMxMatrix(pe,1,mxDOUBLE_CLASS,mxREAL);
             armaSetPr(plhs[5],lambda);
         }
-        if (nlhs>6) plhs[6] = mxCreateDoubleScalar(ElapsedTime);
+        if (nlhs>6) {
+            plhs[6] = armaCreateMxMatrix(n,p,mxDOUBLE_CLASS,mxREAL);
+            armaSetPr(plhs[6],XDat);
+        }
+        if (nlhs>7) plhs[7] = mxCreateDoubleScalar(ElapsedTime);
+        
     }
     else
     {

@@ -1,4 +1,4 @@
-function [Ksparse, Adj, Kest, LAMBDA, run_time] = BISN_integrated(data, options)
+function [Ksparse, Adj, Kest, Vest, Lambda, omega, run_time, data_est] = BISN_integrated(data, options)
 
 % The function enables BISN to deal with different practical scenarios.
 % Inputs:
@@ -13,10 +13,11 @@ function [Ksparse, Adj, Kest, LAMBDA, run_time] = BISN_integrated(data, options)
 %                   options.s: minibatch size (s = p/(1e-3*(p-1)+1)) by 
 %                   default)
 %                   options.normalize: boolean value to decide whether to
-%                   normalize the data before applying BISN. Note that when
-%                   options.prm_learning = 1, the original unnormalize the 
-%                   data is still used when reestimate the nonzero elements 
-%                   in the precision matrix via maximum likelihood.
+%                   normalize the data before applying BISN ?1 by default). 
+%                   Note that when options.prm_learning = 1, the original 
+%                   unnormalize the data is still used for reestimating the 
+%                   nonzero elements in the precision matrix via maximum 
+%                   likelihood.
 %                   options.backward_pass: boolean value to decide whether
 %                   to enable the backward pass or not. (1 by default)
 %                   options.backward_pass = 1 would run the BISN algorithm
@@ -39,8 +40,16 @@ function [Ksparse, Adj, Kest, LAMBDA, run_time] = BISN_integrated(data, options)
 %                   models, 2019).
 % Kest:             p x p full matrix. Kest = ML * MD * ML', where MD and
 %                   ML denotes the mean of the D and L matrix.
+% Vest:             p x p full matrix of estimated variaces of elements in
+%                   the precision matrix.
 % Lambda:           p x p estimated Lambda matrix.
+% omega:            the estiamted global shrinkage parameter
 % run_time:         total running time.
+% data_est:         n x p matrix of estimated (normalized) data with missing
+%                   values imputed by BISN. 
+% Note that except Ksparse, all other output parameters are estimated based
+% on the normalized data if options.normalize = 1, and the original input
+% data if options.normalize = 0.
 % AUTHOR: Hang Yu, 2020, NTU.
 
 
@@ -86,8 +95,8 @@ end
 tic;
 
 
-LAMBDA = zeros(p);
-LAMBDA1 = zeros(p);
+Lambda = zeros(p);
+Lambda1 = zeros(p);
 idl = find(tril(ones(p), -1));
 
 data_normalize = data;
@@ -107,27 +116,38 @@ if ~isempty(id_row)
     row_missing = unique(id_row);
     id_mat = [id_row, id_col];
     fprintf("forward pass...\n");
-    [ML,~,mD,~,~,lambda] = BISN_missing(data_normalize, row_missing, id_mat, ...
+    [ML,VL,mD,vD,omega,lambda,data_est] = BISN_missing(data_normalize, row_missing, id_mat, ...
         options.eta, options.maxIter, options.tol, options.r, options.s);
-    Kest = ML * diag(mD) * ML';
-    LAMBDA(idl) = lambda;
-    LAMBDA = LAMBDA + LAMBDA';
+    Kest = ML * spdiags(mD, 0, p, p) * ML';
+    ML2 = ML .^ 2;
+    mD2 = mD .^ 2;
+    ML2pVL = ML .^ 2 + VL;
+    Vest = ML2pVL * spdiags(mD2 + vD, 0, p, p) * ML2pVL.' - ...
+        ML2 * spdiags(mD2, 0, p, p) * ML2.';
+    Lambda(idl) = lambda;
+    Lambda = Lambda + Lambda';
     
     if options.backward_pass
         data_normalize(id_missing) = 0;
         data_normalize = data_normalize(:, p:-1:1);
         id_mat(:, 2) = p + 1 - id_mat(:, 2);
         fprintf("backward pass...\n");
-        [ML,~,mD,~,~,lambda] = BISN_missing(data_normalize, row_missing, id_mat, ...
+        [ML,VL,mD,vD,omega1,lambda,data_est1] = BISN_missing(data_normalize, row_missing, id_mat, ...
             options.eta, options.maxIter, options.tol, options.r, options.s);
-        Kest1 = ML * diag(mD) * ML';
-        Kest1 = Kest1(p:-1:1, p:-1:1);
-        LAMBDA1(idl) = lambda;
-        LAMBDA1 = LAMBDA1 + LAMBDA1';
-        LAMBDA1 = LAMBDA1(p:-1:1, p:-1:1);
+        Kest1 = ML * spdiags(mD, 0, p, p) * ML';
+        ML2 = ML .^ 2;
+        mD2 = mD .^ 2;
+        ML2pVL = ML .^ 2 + VL;
+        Vest1 = ML2pVL * spdiags(mD2 + vD, 0, p, p) * ML2pVL.' - ...
+            ML2 * spdiags(mD2, 0, p, p) * ML2.';
+        Lambda1(idl) = lambda;
+        Lambda1 = Lambda1 + Lambda1';
         
-        LAMBDA = (LAMBDA + LAMBDA1) / 2;
-        Kest = (Kest + Kest1) / 2;
+        omega = (omega + omega1) / 2;
+        Lambda = (Lambda + Lambda1(p:-1:1, p:-1:1)) / 2;
+        Kest = (Kest + Kest1(p:-1:1, p:-1:1)) / 2;
+        Vest = (Vest + Vest1(p:-1:1, p:-1:1)) / 2;
+        data_est = (data_est + data_est1(:, p:-1:1)) / 2;
     end
     
 else
@@ -136,37 +156,51 @@ else
         data_normalize = data_normalize*diag(1./std(data_normalize)');
     end
     fprintf("forward pass...\n");
-    [ML,~,mD,~,~,lambda] = BISN(data_normalize, options.eta, options.maxIter, ...
+    [ML,VL,mD,vD,omega,lambda] = BISN(data_normalize, options.eta, options.maxIter, ...
         options.tol, options.r, options.s);
-    Kest = ML * diag(mD) * ML';
-    LAMBDA(idl) = lambda;
-    LAMBDA = LAMBDA + LAMBDA';
+    Kest = ML * spdiags(mD, 0, p, p) * ML';
+    ML2 = ML .^ 2;
+    mD2 = mD .^ 2;
+    ML2pVL = ML .^ 2 + VL;
+    Vest = ML2pVL * spdiags(mD2 + vD, 0, p, p) * ML2pVL.' - ...
+        ML2 * spdiags(mD2, 0, p, p) * ML2.';
+    Lambda(idl) = lambda;
+    Lambda = Lambda + Lambda';
+    data_est = data_normalize;
     
     if options.backward_pass
         data_normalize = data_normalize(:, p:-1:1);
         fprintf("backward pass...\n");
-        [ML,~,mD,~,~,lambda] = BISN(data_normalize, options.eta, options.maxIter, ...
+        [ML,VL,mD,vD,omega1,lambda] = BISN(data_normalize, options.eta, options.maxIter, ...
             options.tol, options.r, options.s);
-        Kest1 = ML * diag(mD) * ML';
+        Kest1 = ML * spdiags(mD, 0, p, p) * ML';
         Kest1 = Kest1(p:-1:1, p:-1:1);
-        LAMBDA1(idl) = lambda;
-        LAMBDA1 = LAMBDA1 + LAMBDA1';
-        LAMBDA1 = LAMBDA1(p:-1:1, p:-1:1);
+        ML2 = ML .^ 2;
+        mD2 = mD .^ 2;
+        ML2pVL = ML .^ 2 + VL;
+        Vest1 = ML2pVL * spdiags(mD2 + vD, 0, p, p) * ML2pVL.' - ...
+            ML2 * spdiags(mD2, 0, p, p) * ML2.';
+        Vest1 = Vest1(p:-1:1, p:-1:1);
+        Lambda1(idl) = lambda;
+        Lambda1 = Lambda1 + Lambda1';
+        Lambda1 = Lambda1(p:-1:1, p:-1:1);
         
-        LAMBDA = (LAMBDA + LAMBDA1) / 2;
+        omega = (omega + omega1) / 2;
+        Lambda = (Lambda + Lambda1) / 2;
         Kest = (Kest + Kest1) / 2;
+        Vest = (Vest + Vest1) / 2;
     end
 end
     
 t = toc;
-fprintf("forward-backward pass is done, elapsed time is %d s\n", t);
+fprintf("forward-backward pass is done, elapsed time is %d seconds\n", t);
 run_time = t;
 
 fprintf("estimate adjacency matrix by thresholding lambda / (1 + lambda)...\n");
 tic;
-lambda = LAMBDA(idl);
+lambda = Lambda(idl);
 ll = lambda ./ (1+lambda);
-[~, fx, x, ~] = kde(ll);
+[~, fx, x, ~] = kde(ll, 4096, 0, 1);
 idx = find(x > 1e-2 & x < 0.6);
 fx = fx(idx);
 x = x(idx);
@@ -177,7 +211,7 @@ legend('kernel density', 'selected threshold');
 title('Density function of <\lambda_{jk}> / (<\lambda_{jk}> + 1)');
 
 thr = x(q(1)) / (1 - x(q(1)));
-Adj = LAMBDA < thr;
+Adj = Lambda < thr;
 Ksparse = Kest;
 Ksparse(Adj == 0) = 0;
 t = toc;
