@@ -10,7 +10,7 @@
 #include <time.h>
 #include <boost/math/special_functions/expint.hpp>
 #include <boost/math/special_functions/trigamma.hpp>
-#include <boost/math/special_functions/round.hpp>
+//#include <boost/math/special_functions/round.hpp>
 #define POSITIVE_EPS 0.0001
 #define epsilon1 1e-30
 #define epsilon2 1e-7
@@ -69,7 +69,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
     }
     
     if (nrhs>7) s = (uword)armaGetDouble(prhs[7]);
-    else s = boost::math::round((double)p/(1e-3*(p-1)+1)); //(pow((double)p,1.5)/(5e-2*(p-1)+sqrt(double(p))));
+    else s = round((double)p/(1e-3*(p-1)+1)); //(pow((double)p,1.5)/(5e-2*(p-1)+sqrt(double(p))));
     
     
     
@@ -171,8 +171,10 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
         ML2pVL.elem(idl) = ML2.elem(idl)+vL;
 
         omega = a/b;
-        for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
-		lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
+        lambda = d;
+        lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(-val) * exp(val));});
+        //for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
+		//lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
         lambda = 1/(d%lambda)-1;
 //         lambda.elem(find(d<0)).fill(1e6);
 //         lambda.elem(find(lambda>1e6)).fill(1e6);
@@ -241,7 +243,9 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
 
         gmD = (VL.t()*dnS+trans(sum(ML%c1))+trans(sum(VL%(c2pc3+c3)))%mD)/2;
         gvD = trans(sum(ML2pVL%c2pc3))/4;
-        for (i=0;i<p;i++) c5(i) = boost::math::trigamma(alpha(i));
+        c5 = alpha;
+        c5.transform([](double val) { return boost::math::trigamma(val); });
+        //for (i=0;i<p;i++) c5(i) = boost::math::trigamma(alpha(i));
         c6 = mD/(alpha%c5-1);
         alphatmp = nd2pp+c6/beta%gvD;
         alphatmp.elem(find(alphatmp<0)).zeros();
@@ -404,8 +408,10 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
         if (nlhs>5)
         {
             //lambda = c/d;
-            for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
-            lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
+            lambda = d;
+            lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(-val) * exp(val));});
+            //for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
+            //lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
             lambda = 1/(d%lambda)-1;
             plhs[5] = armaCreateMxMatrix(pe,1,mxDOUBLE_CLASS,mxREAL);
             armaSetPr(plhs[5],lambda);

@@ -154,7 +154,8 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
 
         omega = a/b;
         lambda = d;
-        lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(-val) * exp(val));});
+        lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(val) * exp(val));});
+        lambda.t(
 //         for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
 // 		lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
         lambda = 1/(d%lambda)-1;
@@ -209,9 +210,10 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
         d2zeta = (1-1/tau)*d2zeta + mean(square(gzeta))/tau;
 
         gmD = (VL.t()*dnS+trans(sum(ML%c1))+trans(sum(VL%(c2pc3+c3)))%mD)/2;
-        gvD = trans(sum(ML2pVL%c2pc3))/4;;
+        gvD = trans(sum(ML2pVL%c2pc3))/4;
         c5 = alpha;
         c5.transform([](double val) { return boost::math::trigamma(val); });
+        c5.t().print();
         //for (i=0;i<p;i++) c5(i) = boost::math::trigamma(alpha(i));
         c6 = mD/(alpha%c5-1);
         alphatmp = nd2pp+c6/beta%gvD;
@@ -379,7 +381,7 @@ void mexFunction(int nlhs,mxArray *plhs[],int nrhs, const mxArray *prhs[])
         {
             //lambda = c/d;
             lambda = d;
-            lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(-val) * exp(val));});
+            lambda.transform([](double val){return (val > 10) ? Lentz_Algorithm(val) : (- boost::math::expint(val) * exp(val));});
             //for (i=0;i<pe;i++) lambda(i)=(d(i)>10)?Lentz_Algorithm(d(i)):-boost::math::expint(-d(i));
             //lambda.elem(find(d<=10)) %= exp(d.elem(find(d<=10)));
             lambda = 1/(d%lambda)-1;
