@@ -81,6 +81,12 @@ resulting <&lambda;<sub>jk</sub>> with that from the forward pass. Note that
 options.backward_pass = 1 by default and it can be set to 0 when the sample 
 size is large.
 
+In addition, the kernel density of 
+<&lambda;<sub>jk</sub>> / (1 +<&lambda;<sub>jk</sub>>)
+might be bumpy when the sample size is small. In this case, it is better to 
+plot out the density and choose the threshold of <&lambda;<sub>jk</sub>> 
+manually.
+
 On the other hand, after estimating the sparse precision matrix, 
 BISN_integrated.m can further reestimate the non-zero elements in the 
 precision via maximum likelihood by setting options.prm_learning = 1. BISN 
@@ -93,7 +99,7 @@ K = BISN_integrated(XDat, options);
 
 In addition to the sparse K matrix, there are other output parameters, 
 including the estimated mean and variance of the elements in the precision 
-matrix before sparsifying K, the imputed missing data. Please refer to the 
+matrix before sparsifying K. Please refer to the 
 function BISN_integrated.m for more details.
 
 An example of testing BISN_integrated on synthetic data w/o missing data 
