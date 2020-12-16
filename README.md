@@ -4,7 +4,7 @@ This Matlab toolbox implements the BISN algorithm proposed in [1]. Please
 check the following steps before using the toolbox.
 
 
-## Comiling the mex code
+## Compiling the mex code
 
 The C++ code is written based on the template-based C++ library Armadillo [2]. 
 To achieve the best performance, it is better to link the C++ code with
