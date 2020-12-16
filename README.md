@@ -41,7 +41,7 @@ linux_gpp_IntelMKL_mex.m in Matlab.
 You may need to change directory of Intel MKL to your own installation 
 directory in the above m files.
 
-##Call function BISN_integrated
+## Call function BISN_integrated.m
 
 We can simply call the function as:
 ```matlab
