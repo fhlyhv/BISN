@@ -3,6 +3,7 @@
 This Matlab toolbox implements the BISN algorithm proposed in [1]. Please 
 check the following steps before using the toolbox.
 
+R package can be found at https://github.com/fhlyhv/BISNR.
 
 ## Compiling the mex code
 
